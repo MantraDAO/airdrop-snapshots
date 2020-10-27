@@ -1,0 +1,24 @@
+{
+  "name": "mantra-staking-snapshots",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "license": "UNLICENSED",
+  "scripts": {
+    "clean": "rm -r dist && rm tsconfig.tsbuildinfo",
+    "build": "yarn clean && tsc",
+    "snapshot:om": "yarn build && node ./dist om",
+    "snapshot:uni": "yarn build && node ./dist uni"
+  },
+  "dependencies": {
+    "bignumber.js": "^9.0.1",
+    "config": "^3.3.2",
+    "fs-extra": "^9.0.1",
+    "web3": "^1.3.0",
+    "web3-core": "^1.3.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.2",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
+  }
+}
