@@ -5,7 +5,7 @@ import Web3 from "web3";
 import { Contract, Snapshot as GenericSnapshot } from "./snapshot_type";
 import { ONE_TOKEN, sortedStakedBalances } from "./utils";
 
-const BATCH_SIZE = 100;
+const BATCH_SIZE = 50;
 
 type Snapshot = GenericSnapshot<Contract.OM_STAKING>;
 
@@ -34,6 +34,7 @@ export async function snapshotOm(web3: Web3, blockNumber: number, bearingSnapsho
       stakedBalances[address] = amount;
       if (amount.gt(new BN(0))) totalStaked = totalStaked.plus(amount);
     }));
+    await new Promise((resolve) => setTimeout(() => resolve(), 1e3));
   }
   return {
     blockNumber,
