@@ -17,7 +17,7 @@ const web3 = new Web3(provider);
 
 export async function snapshot(contract: Contract, blockNumber: number | null) {
   if (!blockNumber) blockNumber = await web3.eth.getBlockNumber().then<number, number>((res) => res - 1);
-  const dir = path.resolve(__dirname, "../output", contract);
+  const dir = path.resolve(__dirname, "../output/legacy-snapshot-data", contract);
   const snapshot = await buildSnapshot(web3, contract, blockNumber, dir)
   await writeFile(path.resolve(dir, `${blockNumber}.json`), JSON.stringify(snapshot, null, 2) + "\n");
 }
