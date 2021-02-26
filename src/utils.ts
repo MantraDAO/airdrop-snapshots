@@ -22,7 +22,10 @@ export async function findBearingSnapshot<T>(dir: string, snapshotBlockNumber: n
   return readFile(path.resolve(dir, `${bearingBlockNumber.toString(10)}.json`), "utf-8").then((res) => JSON.parse(res));
 }
 
-export function sortedStakedBalances(stakedBalances: { [address: string]: BN }): { [address: string]: string } {
+export function sortedStakedBalances(
+  stakedBalances: { [address: string]: BN },
+  divByOneToken: boolean = true,
+): { [address: string]: string } {
   const sortedBalances = Object.keys(stakedBalances)
   .map<[string, BN]>((address) => [address, stakedBalances[address]])
   .sort((a, b) => {
@@ -33,6 +36,8 @@ export function sortedStakedBalances(stakedBalances: { [address: string]: BN }):
     return 0;
   });
   const result: { [address: string]: string } = {};
-  for (const [address, amount] of sortedBalances) result[address] = amount.div(ONE_TOKEN).toString(10);
+  for (const [address, amount] of sortedBalances) {
+    result[address] = (divByOneToken ? amount.div(ONE_TOKEN) : amount).toString(10);
+  }
   return result;
 }

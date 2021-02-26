@@ -4,5 +4,8 @@ declare module "config" {
   export const CONTRACTS_ADDRESSES: {
     readonly OM_STAKING: string;
     readonly UNI_OM_LP: string;
+    readonly OM_NFT: string;
   };
+  export const OM_NFT_ID: number | string;
+  export const BATCH_SIZE: number | string;
 }

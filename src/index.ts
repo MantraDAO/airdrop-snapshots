@@ -7,7 +7,7 @@ import Web3 from "web3";
 import { buildSnapshot } from "./snapshot";
 import { Contract } from "./snapshot_type";
 
-const availableContracts: Contract[] = [Contract.OM_STAKING, Contract.UNI_OM_LP];
+const availableContracts: Contract[] = [Contract.OM_STAKING, Contract.UNI_OM_LP, Contract.OM_NFT];
 
 const provider = new Web3.providers.WebsocketProvider(`wss://mainnet.infura.io/ws/v3/${INFURA_API_KEY}`, {
   clientConfig: { maxReceivedFrameSize: 5e6, maxReceivedMessageSize: 5e6 },
@@ -15,8 +15,9 @@ const provider = new Web3.providers.WebsocketProvider(`wss://mainnet.infura.io/w
 
 const web3 = new Web3(provider);
 
-export async function snapshot(contract: Contract, blockNumber: number | null) {
-  if (!blockNumber) blockNumber = await web3.eth.getBlockNumber().then<number, number>((res) => res - 1);
+export async function snapshot(contract: Contract, blockNumber: number | string | null) {
+  if (typeof blockNumber === "string") blockNumber = +blockNumber;
+  else if (!blockNumber) blockNumber = await web3.eth.getBlockNumber().then<number, number>((res) => res - 1);
   const dir = path.resolve(__dirname, "../output/legacy-snapshot-data", contract);
   const snapshot = await buildSnapshot(web3, contract, blockNumber, dir)
   await writeFile(path.resolve(dir, `${blockNumber}.json`), JSON.stringify(snapshot, null, 2) + "\n");

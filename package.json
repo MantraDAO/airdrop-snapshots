@@ -7,7 +7,8 @@
     "clean": "rm -r dist && rm tsconfig.tsbuildinfo",
     "build": "yarn clean && tsc",
     "snapshot:om": "yarn build && node ./dist om",
-    "snapshot:uni": "yarn build && node ./dist uni"
+    "snapshot:uni": "yarn build && node ./dist uni",
+    "snapshot:om_nft": "yarn build && node ./dist om_nft"
   },
   "dependencies": {
     "bignumber.js": "^9.0.1",
