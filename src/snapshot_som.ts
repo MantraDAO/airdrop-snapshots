@@ -44,7 +44,7 @@ export async function snapshotSom(web3: Web3, blockNumber: number, bearingSnapsh
       from = blockNumberMinusBatch < bearingBlockNumber ? bearingBlockNumber + 1 : blockNumberMinusBatch,
       to = blockNumber;
     from >= bearingBlockNumber + 1;
-    to = from, from - +config.BATCH_SIZE < bearingBlockNumber ? bearingBlockNumber + 1 : from - +config.BATCH_SIZE
+    to = from, from = (from - +config.BATCH_SIZE < bearingBlockNumber ? bearingBlockNumber + 1 : from - +config.BATCH_SIZE)
   ) {
     const newLogs = await web3.eth.getPastLogs({
       address: config.CONTRACTS_ADDRESSES.SOM,
