@@ -25,8 +25,6 @@ export async function snapshotOm2(web3: Web3, blockNumber: number, bearingSnapsh
     console.log(`${((from - bearingBlockNumber) / (blockNumber - bearingBlockNumber) * 100).toFixed(2)}%`);
     const newLogs = await web3.eth.getPastLogs({
       address: config.CONTRACTS_ADDRESSES.OM2,
-    //   fromBlock: 12011006,
-    //   toBlock: 12011008,
       fromBlock: from + 1,
       toBlock: to,
       topics: [TRANSFER_EVENT_SIGNATURE],
