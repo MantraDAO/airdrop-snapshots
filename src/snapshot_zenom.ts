@@ -49,9 +49,14 @@ export async function snapshotZenOm(web3: Web3, blockNumber: number, bearingSnap
       balances[log.to] = balances[log.to].plus(log.amount);
     }
   }
+  const price = await web3.eth.call({
+    to: config.CONTRACTS_ADDRESSES.ZENOM,
+    data: "0x182df0f5",
+  }, blockNumber).then((res) => new BN(res.slice(2), 16));
   return {
     blockNumber,
     totalSupply: totalSupply.toString(10),
+    price: price.toString(10),
     balances: sortedStakedBalances(Object.keys(balances).reduce<{ [address: string]: BN }>((acc, address) => ({
       ...acc,
       [address]: balances[address],
