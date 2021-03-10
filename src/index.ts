@@ -13,6 +13,7 @@ const availableContracts: Contract[] = [
   Contract.OM_NFT,
   Contract.OM2,
   Contract.POLKAPET,
+  Contract.SOM,
 ];
 
 const provider = new Web3.providers.WebsocketProvider(`wss://mainnet.infura.io/ws/v3/${INFURA_API_KEY}`, {

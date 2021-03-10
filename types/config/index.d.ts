@@ -6,6 +6,7 @@ declare module "config" {
     readonly UNI_OM_LP: string;
     readonly OM_NFT: string;
     readonly OM2: string;
+    readonly SOM: string;
     readonly POLKAPET: string;
   };
   export const OM_NFT_ID: number | string;
