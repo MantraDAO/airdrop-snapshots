@@ -14,6 +14,7 @@ const availableContracts: Contract[] = [
   Contract.OM2,
   Contract.POLKAPET,
   Contract.SOM,
+  Contract.ZENOM,
 ];
 
 const provider = new Web3.providers.WebsocketProvider(`wss://mainnet.infura.io/ws/v3/${INFURA_API_KEY}`, {
