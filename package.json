@@ -9,7 +9,8 @@
     "snapshot:om": "yarn build && node ./dist om",
     "snapshot:uni": "yarn build && node ./dist uni",
     "snapshot:om_nft": "yarn build && node ./dist om_nft",
-    "snapshot:om2": "yarn build && node ./dist om2"
+    "snapshot:om2": "yarn build && node ./dist om2",
+    "snapshot:som": "yarn build && node ./dist som"
   },
   "dependencies": {
     "bignumber.js": "^9.0.1",
