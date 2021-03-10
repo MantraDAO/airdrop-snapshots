@@ -4,12 +4,15 @@
   "main": "dist/index.js",
   "license": "UNLICENSED",
   "scripts": {
-    "clean": "rm -r dist && rm tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist && rm -f tsconfig.tsbuildinfo",
     "build": "yarn clean && tsc",
     "snapshot:om": "yarn build && node ./dist om",
     "snapshot:uni": "yarn build && node ./dist uni",
     "snapshot:om_nft": "yarn build && node ./dist om_nft",
-    "snapshot:zenom": "yarn build && node ./dist zenom"
+    "snapshot:zenom": "yarn build && node ./dist zenom",
+    "snapshot:om2": "yarn build && node ./dist om2",
+    "snapshot:polkapet": "yarn build && node ./dist polkapet",
+    "snapshot:som": "yarn build && node ./dist som"
   },
   "dependencies": {
     "bignumber.js": "^9.0.1",
