@@ -7,7 +7,7 @@ import Web3 from "web3";
 import { buildSnapshot } from "./snapshot";
 import { Contract } from "./snapshot_type";
 
-const availableContracts: Contract[] = [Contract.OM_STAKING, Contract.UNI_OM_LP, Contract.OM_NFT];
+const availableContracts: Contract[] = [Contract.OM_STAKING, Contract.UNI_OM_LP, Contract.OM_NFT, Contract.ZENOM];
 
 const provider = new Web3.providers.WebsocketProvider(`wss://mainnet.infura.io/ws/v3/${INFURA_API_KEY}`, {
   clientConfig: { maxReceivedFrameSize: 5e6, maxReceivedMessageSize: 5e6 },
