@@ -7,7 +7,9 @@ declare module "config" {
     readonly OM_NFT: string;
     readonly OM2: string;
     readonly SOM: string;
+    readonly POLKAPET: string;
   };
   export const OM_NFT_ID: number | string;
+  export const POLKAPET_ID: number | string;
   export const BATCH_SIZE: number | string;
 }

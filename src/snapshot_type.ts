@@ -4,6 +4,7 @@ export enum Contract {
   OM_NFT = "om_nft",
   OM2 = "om2",
   SOM = "som",
+  POLKAPET = "polkapet",
 }
 
 interface OmStakingSnapshot {
@@ -18,4 +19,5 @@ export type Snapshot<T extends Contract> = {
   [Contract.OM_NFT]: { blockNumber: number; totalSupply: string; balances: { [address: string]: string } };
   [Contract.OM2]: { blockNumber: number; totalSupply: string; balances: { [address: string]: string } };
   [Contract.SOM]: { blockNumber: number; totalSupply: string; balances: { [address: string]: string } };
+  [Contract.POLKAPET]: { blockNumber: number; totalSupply: string; balances: { [address: string]: string } };
 }[T];
