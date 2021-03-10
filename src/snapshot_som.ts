@@ -39,13 +39,16 @@ export async function snapshotSom(web3: Web3, blockNumber: number, bearingSnapsh
   for (const log of logs) {
     if (log.amount.eq(0)) continue;
     if (log.from === ZERO_ADDRESS) totalSupply = totalSupply.plus(log.amount);
-    else if (log.to === ZERO_ADDRESS) totalSupply = totalSupply.minus(log.amount);
     else {
       balances[log.from] = balances[log.from].minus(log.amount);
       if (balances[log.from].eq(0)) delete balances[log.from];
     }
-    if (!balances[log.to]) balances[log.to] = new BN(0);
-    balances[log.to] = balances[log.to].plus(log.amount);
+
+    if (log.to === ZERO_ADDRESS) totalSupply = totalSupply.minus(log.amount);
+    else {
+      if (!balances[log.to]) balances[log.to] = new BN(0);
+      balances[log.to] = balances[log.to].plus(log.amount);
+    }
   }
   return {
     blockNumber,
