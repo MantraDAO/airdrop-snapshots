@@ -18,6 +18,6 @@ export type Snapshot<T extends Contract> = {
   [Contract.UNI_OM_LP]: OmStakingSnapshot & { omPrice: string };
   [Contract.OM_NFT]: { blockNumber: number; totalSupply: string; balances: { [address: string]: string } };
   [Contract.OM2]: { blockNumber: number; totalSupply: string; balances: { [address: string]: string } };
-  [Contract.SOM]: { blockNumber: number; totalSupply: string; balances: { [address: string]: string } };
+  [Contract.SOM]: { blockNumber: number; totalSupply: string; price: string, balances: { [address: string]: string } };
   [Contract.POLKAPET]: { blockNumber: number; totalSupply: string; balances: { [address: string]: string } };
 }[T];

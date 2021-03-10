@@ -8,9 +8,11 @@ import { sortedStakedBalances, ZERO_ADDRESS } from "./utils";
 type Snapshot = GenericSnapshot<Contract.SOM>;
 
 const TRANSFER_EVENT_SIGNATURE = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+const PRICE_UPDATED_EVENT_SIGNATURE = "0x15819dd2fd9f6418b142e798d08a18d0bf06ea368f4480b7b0d3f75bd966bc48";
 
 export async function snapshotSom(web3: Web3, blockNumber: number, bearingSnapshot: Snapshot): Promise<Snapshot> {
   const bearingBlockNumber = bearingSnapshot.blockNumber;
+  let price = new BN(bearingSnapshot.price);
   let totalSupply = new BN(bearingSnapshot.totalSupply);
   const balances: { [address: string]: BN } = {};
   for (const address of Object.keys(bearingSnapshot.balances)) {
@@ -30,11 +32,31 @@ export async function snapshotSom(web3: Web3, blockNumber: number, bearingSnapsh
       topics: [TRANSFER_EVENT_SIGNATURE],
     });
     logs.push(...newLogs.map((log) => {
-      const from = `0x${log.topics[1].slice(2).slice(24).toLowerCase()}`;
-      const to = `0x${log.topics[2].slice(2).slice(24).toLowerCase()}`;
-      const amount = new BN(log.data, 16);
-      return { from, to, amount };
+        const from = `0x${log.topics[1].slice(2).slice(24).toLowerCase()}`;
+        const to = `0x${log.topics[2].slice(2).slice(24).toLowerCase()}`;
+        const amount = new BN(log.data, 16);
+        return { from, to, amount };
     }));
+  }
+  for (
+    let
+      blockNumberMinusBatch = blockNumber - +config.BATCH_SIZE,
+      from = blockNumberMinusBatch < bearingBlockNumber ? bearingBlockNumber + 1 : blockNumberMinusBatch,
+      to = blockNumber;
+    from >= bearingBlockNumber + 1;
+    to = from, from - +config.BATCH_SIZE < bearingBlockNumber ? bearingBlockNumber + 1 : from - +config.BATCH_SIZE
+  ) {
+    const newLogs = await web3.eth.getPastLogs({
+      address: config.CONTRACTS_ADDRESSES.SOM,
+      fromBlock: from + 1,
+      toBlock: to,
+      topics: [PRICE_UPDATED_EVENT_SIGNATURE],
+    });
+    if (newLogs.length) {
+      const latestLog = newLogs[newLogs.length - 1];
+      price = new BN(latestLog.data.slice(2).slice(0, 64), 16);
+      break;
+    }
   }
   for (const log of logs) {
     if (log.amount.eq(0)) continue;
@@ -53,6 +75,7 @@ export async function snapshotSom(web3: Web3, blockNumber: number, bearingSnapsh
   return {
     blockNumber,
     totalSupply: totalSupply.toString(10),
+    price: price.toString(10),
     balances: sortedStakedBalances(Object.keys(balances).reduce<{ [address: string]: BN }>((acc, address) => ({
       ...acc,
       [address]: balances[address],
