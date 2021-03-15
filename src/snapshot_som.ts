@@ -22,7 +22,9 @@ export async function snapshotSom(web3: Web3, blockNumber: number, bearingSnapsh
   for (
     let from = bearingBlockNumber, to = from + +config.BATCH_SIZE;
     from <= blockNumber;
-    from = to, to += +config.BATCH_SIZE
+    from = to, to = to === blockNumber
+      ? to + 1
+      : (to + +config.BATCH_SIZE > blockNumber ? blockNumber : to + +config.BATCH_SIZE)
   ) {
     console.log(`${((from - bearingBlockNumber) / (blockNumber - bearingBlockNumber) * 100).toFixed(2)}%`);
     const newLogs = await web3.eth.getPastLogs({
