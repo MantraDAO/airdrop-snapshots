@@ -11,6 +11,7 @@ const TRANSFER_EVENT_SIGNATURE = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4
 
 export async function snapshotOm2(web3: Web3, blockNumber: number, bearingSnapshot: Snapshot): Promise<Snapshot> {
   const bearingBlockNumber = bearingSnapshot.blockNumber;
+  let lastBlockNumber = bearingBlockNumber;
   let totalSupply = new BN(bearingSnapshot.totalSupply);
   const balances: { [address: string]: BN } = {};
   for (const address of Object.keys(bearingSnapshot.balances)) {
@@ -19,8 +20,10 @@ export async function snapshotOm2(web3: Web3, blockNumber: number, bearingSnapsh
   let logs: { from: string; to: string; amount: BN }[] = [];
   for (
     let from = bearingBlockNumber, to = from + +config.BATCH_SIZE;
-    from <= blockNumber;
-    from = to, to += +config.BATCH_SIZE
+    to <= blockNumber;
+    from = to, to = to === blockNumber
+      ? to + 1
+      : (to + +config.BATCH_SIZE > blockNumber ? blockNumber : to + +config.BATCH_SIZE)
   ) {
     console.log(`${((from - bearingBlockNumber) / (blockNumber - bearingBlockNumber) * 100).toFixed(2)}%`);
     const newLogs = await web3.eth.getPastLogs({
@@ -35,6 +38,7 @@ export async function snapshotOm2(web3: Web3, blockNumber: number, bearingSnapsh
       const amount = new BN(log.data, 16);
       return { from, to, amount };
     }));
+    lastBlockNumber = to;
   }
   for (const log of logs) {
     if (log.amount.eq(0)) continue;
@@ -47,7 +51,7 @@ export async function snapshotOm2(web3: Web3, blockNumber: number, bearingSnapsh
     balances[log.to] = balances[log.to].plus(log.amount);
   }
   return {
-    blockNumber,
+    blockNumber: lastBlockNumber,
     totalSupply: totalSupply.toString(10),
     balances: sortedStakedBalances(Object.keys(balances).reduce<{ [address: string]: BN }>((acc, address) => ({
       ...acc,
