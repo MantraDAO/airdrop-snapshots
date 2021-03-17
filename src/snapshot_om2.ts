@@ -1,5 +1,6 @@
 import BN from "bignumber.js";
-import config = require("config");
+import { BATCH_SIZE, CONTRACTS_ADDRESSES } from "config";
+import { batchIterate } from "ebatch";
 import Web3 from "web3";
 
 import { Contract, Snapshot as GenericSnapshot } from "./snapshot_type";
@@ -16,36 +17,33 @@ export async function snapshotOm2(web3: Web3, blockNumber: number, bearingSnapsh
   for (const address of Object.keys(bearingSnapshot.balances)) {
     balances[address] = new BN(bearingSnapshot.balances[address]);
   }
-  let logs: { from: string; to: string; amount: BN }[] = [];
-  for (
-    let from = bearingBlockNumber, to = from + +config.BATCH_SIZE;
-    from <= blockNumber;
-    from = to, to += +config.BATCH_SIZE
-  ) {
-    console.log(`${((from - bearingBlockNumber) / (blockNumber - bearingBlockNumber) * 100).toFixed(2)}%`);
-    const newLogs = await web3.eth.getPastLogs({
-      address: config.CONTRACTS_ADDRESSES.OM2,
-      fromBlock: from + 1,
-      toBlock: to,
+  const blocksToIterate = blockNumber - bearingBlockNumber;
+  await batchIterate(bearingBlockNumber + 1, blockNumber, +BATCH_SIZE, async (fromBlock, toBlock) => {
+    const passedBlocksCount = fromBlock - bearingBlockNumber - 1;
+    console.log(`${(passedBlocksCount / blocksToIterate * 100).toFixed(2).padStart(5, " ")}%`, [fromBlock, toBlock]);
+    const logs = await web3.eth.getPastLogs({
+      address: CONTRACTS_ADDRESSES.OM2,
+      fromBlock,
+      toBlock,
       topics: [TRANSFER_EVENT_SIGNATURE],
     });
-    logs.push(...newLogs.map((log) => {
-      const from = `0x${log.topics[1].slice(2).slice(24).toLowerCase()}`;
-      const to = `0x${log.topics[2].slice(2).slice(24).toLowerCase()}`;
-      const amount = new BN(log.data, 16);
-      return { from, to, amount };
-    }));
-  }
-  for (const log of logs) {
-    if (log.amount.eq(0)) continue;
-    if (log.from === ZERO_ADDRESS) totalSupply = totalSupply.plus(log.amount);
-    else {
-      balances[log.from] = balances[log.from].minus(log.amount);
-      if (balances[log.from].eq(0)) delete balances[log.from];
+    for (const log of logs) {
+      const amount = new BN(log.data.slice(2), 16);
+      if (amount.eq(0)) continue;
+      const fromAccount = `0x${log.topics[1].slice(2).slice(24).toLowerCase()}`;
+      const toAccount = `0x${log.topics[2].slice(2).slice(24).toLowerCase()}`;
+      if (fromAccount === ZERO_ADDRESS) totalSupply = totalSupply.plus(amount);
+      else {
+        balances[fromAccount] = balances[fromAccount].minus(amount);
+        if (balances[fromAccount].eq(0)) delete balances[fromAccount];
+      }
+      if (toAccount === ZERO_ADDRESS) totalSupply = totalSupply.minus(amount);
+      else {
+        if (!balances[toAccount]) balances[toAccount] = new BN(0);
+        balances[toAccount] = balances[toAccount].plus(amount);
+      }
     }
-    if (!balances[log.to]) balances[log.to] = new BN(0);
-    balances[log.to] = balances[log.to].plus(log.amount);
-  }
+  });
   return {
     blockNumber,
     totalSupply: totalSupply.toString(10),
