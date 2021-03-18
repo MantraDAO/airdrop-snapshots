@@ -1,5 +1,6 @@
 import BN from "bignumber.js";
 import { CONTRACTS_ADDRESSES } from "config";
+import { batchIterate } from "ebatch";
 import Web3 from "web3";
 
 import { Contract, Snapshot as GenericSnapshot } from "./snapshot_type";
@@ -23,10 +24,10 @@ export async function snapshotOm(web3: Web3, blockNumber: number, bearingSnapsho
   const stakedBalances: { [address: string]: BN } = {};
   let totalStaked = new BN(0);
   const indexedAddressesList = [...indexedAddresses];
-  for (let i = 0; i < indexedAddressesList.length; i += BATCH_SIZE) {
-    const progress = i / indexedAddressesList.length;
-    console.log(`${(progress * 100).toFixed(2)}%`);
-    await Promise.all(indexedAddressesList.slice(i, i + BATCH_SIZE).map(async (address) => {
+  await batchIterate(0, indexedAddressesList.length - 1, BATCH_SIZE, async (from, to) => {
+    const progress = from / indexedAddressesList.length;
+    console.log(`${(progress * 100).toFixed(2)}%`, [from, to]);
+    await Promise.all(indexedAddressesList.slice(from, to + 1).map(async (address) => {
       const amount = await web3.eth.call({
         to: CONTRACTS_ADDRESSES.OM_STAKING,
         data: "0x70a08231" + address.slice(2).padStart(64, "0"),
@@ -34,8 +35,8 @@ export async function snapshotOm(web3: Web3, blockNumber: number, bearingSnapsho
       stakedBalances[address] = amount;
       if (amount.gt(new BN(0))) totalStaked = totalStaked.plus(amount);
     }));
-    await new Promise((resolve) => setTimeout(() => resolve(), 1e3));
-  }
+    await new Promise<void>((resolve) => setTimeout(() => resolve(), 1e3));
+  });
   return {
     blockNumber,
     totalStaked: totalStaked.div(ONE_TOKEN).toString(10),
