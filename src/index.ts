@@ -14,6 +14,7 @@ const availableContracts: Contract[] = [
   Contract.OM2,
   Contract.POLKAPET,
   Contract.SOM,
+  Contract.SOM2,
   Contract.ZENOM,
 ];
 

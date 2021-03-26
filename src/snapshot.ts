@@ -7,6 +7,7 @@ import { snapshotUni } from "./snapshot_uni";
 import { snapshotZenOm } from "./snapshot_zenom";
 import { snapshotOm2 } from "./snapshot_om2";
 import { snapshotSom } from "./snapshot_som";
+import { snapshotSom2 } from "./snapshot_som2";
 import { snapshotPolkapet } from "./snapshot_polkapet";
 import { findBearingSnapshot } from "./utils";
 
@@ -30,8 +31,14 @@ export async function buildSnapshot<T extends Contract>(
       return snapshotOm2(web3, blockNumber, bearingSnapshot as Snapshot<Contract.OM2>) as Promise<Snapshot<T>>;
     case Contract.SOM:
       return snapshotSom(web3, blockNumber, bearingSnapshot as Snapshot<Contract.SOM>) as Promise<Snapshot<T>>;
+    case Contract.SOM2:
+      return snapshotSom2(web3, blockNumber, bearingSnapshot as Snapshot<Contract.SOM2>) as Promise<Snapshot<T>>;
     case Contract.POLKAPET:
-      return snapshotPolkapet(web3, blockNumber, bearingSnapshot as Snapshot<Contract.POLKAPET>) as Promise<Snapshot<T>>;
+      return snapshotPolkapet(
+        web3,
+        blockNumber,
+        bearingSnapshot as Snapshot<Contract.POLKAPET>,
+      ) as Promise<Snapshot<T>>;
     default: throw new Error(`Snapshoting "${contract}" contract not implemented`);
   }
 }

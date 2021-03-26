@@ -12,7 +12,8 @@
     "snapshot:zenom": "yarn build && node ./dist zenom",
     "snapshot:om2": "yarn build && node ./dist om2",
     "snapshot:polkapet": "yarn build && node ./dist polkapet",
-    "snapshot:som": "yarn build && node ./dist som"
+    "snapshot:som": "yarn build && node ./dist som",
+    "snapshot:som2": "yarn build && node ./dist som2"
   },
   "dependencies": {
     "bignumber.js": "^9.0.1",

@@ -5,6 +5,7 @@ export enum Contract {
   ZENOM = "zenom",
   OM2 = "om2",
   SOM = "som",
+  SOM2 = "som2",
   POLKAPET = "polkapet",
 }
 
@@ -14,12 +15,15 @@ interface OmStakingSnapshot {
   stakedBalances: { [address: string]: string };
 }
 
+type Balances = { [address: string]: string };
+
 export type Snapshot<T extends Contract> = {
   [Contract.OM_STAKING]: OmStakingSnapshot;
   [Contract.UNI_OM_LP]: OmStakingSnapshot & { omPrice: string };
-  [Contract.OM_NFT]: { blockNumber: number; totalSupply: string; balances: { [address: string]: string } };
-  [Contract.ZENOM]: { blockNumber: number; totalSupply: string; price: string, balances: { [address: string]: string } };
-  [Contract.OM2]: { blockNumber: number; totalSupply: string; balances: { [address: string]: string } };
-  [Contract.SOM]: { blockNumber: number; totalSupply: string; price: string, balances: { [address: string]: string } };
-  [Contract.POLKAPET]: { blockNumber: number; totalSupply: string; balances: { [address: string]: string } };
+  [Contract.OM_NFT]: { blockNumber: number; totalSupply: string; balances: Balances };
+  [Contract.ZENOM]: { blockNumber: number; totalSupply: string; price: string, balances: Balances };
+  [Contract.OM2]: { blockNumber: number; totalSupply: string; balances: Balances };
+  [Contract.SOM]: { blockNumber: number; totalSupply: string; price: string, balances: Balances };
+  [Contract.SOM2]: { blockNumber: number; totalSupply: string; price: string, balances: Balances };
+  [Contract.POLKAPET]: { blockNumber: number; totalSupply: string; balances: Balances };
 }[T];
