@@ -8,10 +8,12 @@ declare module "config" {
     readonly ZENOM: string;
     readonly OM2: string;
     readonly POLKAPET: string;
+    readonly POLKAPET2: string;
     readonly SOM: string;
     readonly SOM2: string;
   };
   export const OM_NFT_ID: number | string;
   export const POLKAPET_ID: number | string;
+  export const POLKAPET2_ID: number | string;
   export const BATCH_SIZE: number | string;
 }

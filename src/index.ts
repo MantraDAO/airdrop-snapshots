@@ -13,6 +13,7 @@ const availableContracts: Contract[] = [
   Contract.OM_NFT,
   Contract.OM2,
   Contract.POLKAPET,
+  Contract.POLKAPET2,
   Contract.SOM,
   Contract.SOM2,
   Contract.ZENOM,

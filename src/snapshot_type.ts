@@ -7,6 +7,7 @@ export enum Contract {
   SOM = "som",
   SOM2 = "som2",
   POLKAPET = "polkapet",
+  POLKAPET2 = "polkapet2",
 }
 
 interface OmStakingSnapshot {
@@ -26,4 +27,5 @@ export type Snapshot<T extends Contract> = {
   [Contract.SOM]: { blockNumber: number; totalSupply: string; price: string, balances: Balances };
   [Contract.SOM2]: { blockNumber: number; totalSupply: string; price: string, balances: Balances };
   [Contract.POLKAPET]: { blockNumber: number; totalSupply: string; balances: Balances };
+  [Contract.POLKAPET2]: { blockNumber: number; totalSupply: string; balances: Balances };
 }[T];
