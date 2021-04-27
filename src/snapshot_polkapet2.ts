@@ -6,7 +6,7 @@ import Web3 from "web3";
 import { Contract, Snapshot as GenericSnapshot } from "./snapshot_type";
 import { sortedStakedBalances, ZERO_ADDRESS } from "./utils";
 
-type Snapshot = GenericSnapshot<Contract.OM_NFT>;
+type Snapshot = GenericSnapshot<Contract.POLKAPET2>;
 
 const TRANSFER_SINGLE_EVENT_SIGNATURE = "0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62";
 const TRANSFER_BATCH_EVENT_SIGNATURE = '0x4a39dc06d4c0dbc64b70af90fd698a233a518aa5d07e595d983b8c0526c8f7fb';
@@ -32,7 +32,7 @@ export async function snapshotPolkapet2(web3: Web3, blockNumber: number, bearing
         const count = Number.parseInt(log.data.slice(2).slice(2 * 64, 3 * 64), 16);
         const amountsPointer = Number.parseInt(log.data.slice(2).slice(64, 2 * 64), 16);
         for (let i = 0; i < count; i++) {
-          const nftId = new BN(log.data.slice(2).slice(64 * (2 + i), 64 * (3 + i)), 16);
+          const nftId = new BN(log.data.slice(2).slice(64 * (3 + i), 64 * (4 + i)), 16);
           if (!nftId.eq(POLKAPET2_ID)) continue;
           const amountFromPointer = 2 * amountsPointer + (i + 1) * 64;
           amount = amount.plus(new BN(log.data.slice(2).slice(amountFromPointer, amountFromPointer + 64), 16));
