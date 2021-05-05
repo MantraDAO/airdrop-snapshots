@@ -1,4 +1,4 @@
-import { INFURA_API_KEY, SNAPSHOT_BLOCK_NUMBER } from "config";
+import { SNAPSHOT_BLOCK_NUMBER } from "config";
 import { writeFile } from "fs-extra";
 import path = require("path");
 import { inspect } from "util";
@@ -10,6 +10,7 @@ import { Contract } from "./snapshot_type";
 const availableContracts: Contract[] = [
   Contract.OM_STAKING,
   Contract.UNI_OM_LP,
+  Contract.CAKE_FINE_LP,
   Contract.OM_NFT,
   Contract.OM2,
   Contract.POLKAPET,
@@ -19,11 +20,11 @@ const availableContracts: Contract[] = [
   Contract.ZENOM,
 ];
 
-const provider = new Web3.providers.WebsocketProvider(`wss://mainnet.infura.io/ws/v3/${INFURA_API_KEY}`, {
-  clientConfig: { maxReceivedFrameSize: 5e6, maxReceivedMessageSize: 5e6 },
-});
+// const provider = new Web3('https://bsc.mantradao.com', {
+//   clientConfig: { maxReceivedFrameSize: 5e6, maxReceivedMessageSize: 5e6 },
+// });
 
-const web3 = new Web3(provider);
+const web3 = new Web3('https://bsc.mantradao.com');
 
 export async function snapshot(contract: Contract, blockNumber: number | string | null) {
   if (typeof blockNumber === "string") blockNumber = +blockNumber;
