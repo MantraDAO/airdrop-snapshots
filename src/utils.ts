@@ -11,7 +11,6 @@ export async function findBearingSnapshot<T>(dir: string, snapshotBlockNumber: n
     return res.filter((s) => /^(0|[1-9]\d*)\.json$/.test(s)).map((s) => Number(s.slice(0, s.length - 5)));
   });
   let bearingBlockNumber = 0;
-  console.log(snapshotBlockNumber)
   for (const blockNumber of snapshotedBlocksNumbers) {
     if (blockNumber > snapshotBlockNumber) continue;
     if (blockNumber === snapshotBlockNumber) {
