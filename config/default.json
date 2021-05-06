@@ -1,5 +1,6 @@
 {
   "INFURA_API_KEY": "0123456789abcdef0123456789abcdef",
+  "BSC_NODE_RPC": "https://bsc.mantradao.com",
   "SNAPSHOT_BLOCK_NUMBER": null,
   "CONTRACTS_ADDRESSES": {
     "OM_STAKING": "0x2bcd929283ad0ee603e743412ddb214b91fbab88",
@@ -10,7 +11,8 @@
     "POLKAPET": "0xba8cdaa1c4c294ad634ab3c6ee0fa82d0a019727",
     "POLKAPET2": "0x8cb813bf27dc744fc5fb6ba7515504de45d39e08",
     "SOM": "0x9e15ad979919bb4db331bfe864475ae3bffeba93",
-    "SOM2": "0xa01892d97e9c8290c2c225fb0b756bfe26bc9802"
+    "SOM2": "0xa01892d97e9c8290c2c225fb0b756bfe26bc9802",
+    "CAKE_FINE_LP": "0xf25897a7edf1dfa9c65f5db7ec4bad868873805b"
   },
   "OM_NFT_ID": 86435,
   "POLKAPET_ID": 4,

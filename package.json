@@ -14,7 +14,8 @@
     "snapshot:polkapet": "yarn build && node ./dist polkapet",
     "snapshot:polkapet2": "yarn build && node ./dist polkapet2",
     "snapshot:som": "yarn build && node ./dist som",
-    "snapshot:som2": "yarn build && node ./dist som2"
+    "snapshot:som2": "yarn build && node ./dist som2",
+    "snapshot:fine_cake": "yarn build && node ./dist cake_fine_lp"
   },
   "dependencies": {
     "bignumber.js": "^9.0.1",

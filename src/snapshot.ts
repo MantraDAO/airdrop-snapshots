@@ -4,6 +4,7 @@ import { snapshotOm } from "./snapshot_om";
 import { snapshotOmNft } from "./snapshot_om_nft";
 import { Contract, Snapshot } from "./snapshot_type";
 import { snapshotUni } from "./snapshot_uni";
+import { snapshotFineCake } from "./snapshot_fine_cake";
 import { snapshotZenOm } from "./snapshot_zenom";
 import { snapshotOm2 } from "./snapshot_om2";
 import { snapshotSom } from "./snapshot_som";
@@ -24,6 +25,8 @@ export async function buildSnapshot<T extends Contract>(
       return snapshotOm(web3, blockNumber, bearingSnapshot as Snapshot<Contract.OM_STAKING>) as Promise<Snapshot<T>>;
     case Contract.UNI_OM_LP:
       return snapshotUni(web3, blockNumber, bearingSnapshot as Snapshot<Contract.UNI_OM_LP>) as Promise<Snapshot<T>>;
+    case Contract.CAKE_FINE_LP:
+      return snapshotFineCake(web3, blockNumber, bearingSnapshot as Snapshot<Contract.CAKE_FINE_LP>) as Promise<Snapshot<T>>;
     case Contract.OM_NFT:
       return snapshotOmNft(web3, blockNumber, bearingSnapshot as Snapshot<Contract.OM_NFT>) as Promise<Snapshot<T>>;
     case Contract.ZENOM:
