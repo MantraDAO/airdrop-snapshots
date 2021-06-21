@@ -15,7 +15,12 @@
     "snapshot:polkapet2": "yarn build && node ./dist polkapet2",
     "snapshot:som": "yarn build && node ./dist som",
     "snapshot:som2": "yarn build && node ./dist som2",
-    "snapshot:fine_cake": "yarn build && node ./dist cake_fine_lp"
+    "snapshot:fine_cake": "yarn build && node ./dist cake_fine_lp",
+    "snapshot:sbondly": "yarn build && node ./dist sbondly",
+    "snapshot:sbondly_bsc": "yarn build && node ./dist sbondly_bsc",
+    "snapshot:uni_bondly_eth": "yarn build && node ./dist uni_bondly_eth",
+    "snapshot:uni_bondly_usdt": "yarn build && node ./dist uni_bondly_usdt",
+    "snapshot:uni_bondly_wbnb": "yarn build && node ./dist uni_bondly_wbnb"
   },
   "dependencies": {
     "bignumber.js": "^9.0.1",

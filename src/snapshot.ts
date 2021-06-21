@@ -11,6 +11,11 @@ import { snapshotSom } from "./snapshot_som";
 import { snapshotSom2 } from "./snapshot_som2";
 import { snapshotPolkapet } from "./snapshot_polkapet";
 import { snapshotPolkapet2 } from "./snapshot_polkapet2";
+import { snapshotSbondly } from "./snapshot_sbondly";
+import { snapshotSbondlyBsc } from "./snapshot_sbondly_bsc";
+import { snapshotUniBondlyEth } from "./snapshot_uni_bondly_eth";
+import { snapshotUniBondlyUsdt } from "./snapshot_uni_bondly_usdt";
+import { snapshotUniBondlyWbnb } from "./snapshot_uni_bondly_wbnb";
 import { findBearingSnapshot } from "./utils";
 
 export async function buildSnapshot<T extends Contract>(
@@ -37,6 +42,17 @@ export async function buildSnapshot<T extends Contract>(
       return snapshotSom(web3, blockNumber, bearingSnapshot as Snapshot<Contract.SOM>) as Promise<Snapshot<T>>;
     case Contract.SOM2:
       return snapshotSom2(web3, blockNumber, bearingSnapshot as Snapshot<Contract.SOM2>) as Promise<Snapshot<T>>;
+
+    case Contract.SBONDLY:
+      return snapshotSbondly(web3, blockNumber, bearingSnapshot as Snapshot<Contract.SBONDLY>) as Promise<Snapshot<T>>;
+    case Contract.SBONDLY_BSC:
+      return snapshotSbondlyBsc(web3, blockNumber, bearingSnapshot as Snapshot<Contract.SBONDLY_BSC>) as Promise<Snapshot<T>>;
+    case Contract.UNI_BONDLY_ETH:
+      return snapshotUniBondlyEth(web3, blockNumber, bearingSnapshot as Snapshot<Contract.UNI_BONDLY_ETH>) as Promise<Snapshot<T>>;
+    case Contract.UNI_BONDLY_USDT:
+      return snapshotUniBondlyUsdt(web3, blockNumber, bearingSnapshot as Snapshot<Contract.UNI_BONDLY_USDT>) as Promise<Snapshot<T>>;
+    case Contract.UNI_BONDLY_WBNB:
+      return snapshotUniBondlyWbnb(web3, blockNumber, bearingSnapshot as Snapshot<Contract.UNI_BONDLY_WBNB>) as Promise<Snapshot<T>>;
     case Contract.POLKAPET:
       return snapshotPolkapet(
         web3,

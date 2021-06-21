@@ -8,7 +8,12 @@ export enum Contract {
   SOM2 = "som2",
   POLKAPET = "polkapet",
   POLKAPET2 = "polkapet2",
-  CAKE_FINE_LP = "cake_fine_lp"
+  CAKE_FINE_LP = "cake_fine_lp",
+  SBONDLY = "sbondly",
+  SBONDLY_BSC = "sbondly_bsc",
+  UNI_BONDLY_ETH = "uni_bondly_eth",
+  UNI_BONDLY_USDT = "uni_bondly_usdt",
+  UNI_BONDLY_WBNB = "uni_bondly_wbnb",
 }
 
 interface OmStakingSnapshot {
@@ -22,11 +27,16 @@ type Balances = { [address: string]: string };
 export type Snapshot<T extends Contract> = {
   [Contract.OM_STAKING]: OmStakingSnapshot;
   [Contract.UNI_OM_LP]: OmStakingSnapshot & { omPrice: string };
+  [Contract.UNI_BONDLY_ETH]: OmStakingSnapshot & { omPrice: string };
+  [Contract.UNI_BONDLY_USDT]: OmStakingSnapshot & { omPrice: string };
+  [Contract.UNI_BONDLY_WBNB]: OmStakingSnapshot & { omPrice: string };
   [Contract.CAKE_FINE_LP]: OmStakingSnapshot;
   [Contract.OM_NFT]: { blockNumber: number; totalSupply: string; balances: Balances };
   [Contract.ZENOM]: { blockNumber: number; totalSupply: string; price: string, balances: Balances };
   [Contract.OM2]: { blockNumber: number; totalSupply: string; balances: Balances };
   [Contract.SOM]: { blockNumber: number; totalSupply: string; price: string, balances: Balances };
+  [Contract.SBONDLY]: { blockNumber: number; totalSupply: string; price: string, balances: Balances };
+  [Contract.SBONDLY_BSC]: { blockNumber: number; totalSupply: string; price: string, balances: Balances };
   [Contract.SOM2]: { blockNumber: number; totalSupply: string; price: string, balances: Balances };
   [Contract.POLKAPET]: { blockNumber: number; totalSupply: string; balances: Balances };
   [Contract.POLKAPET2]: { blockNumber: number; totalSupply: string; balances: Balances };

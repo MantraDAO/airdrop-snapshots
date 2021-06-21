@@ -13,6 +13,11 @@ declare module "config" {
     readonly SOM: string;
     readonly SOM2: string;
     readonly CAKE_FINE_LP: string;
+    readonly SBONDLY: string;
+    readonly SBONDLY_BSC: string;
+    readonly UNI_BONDLY_ETH: string;
+    readonly UNI_BONDLY_USDT: string;
+    readonly UNI_BONDLY_WBNB: string;
   };
   export const OM_NFT_ID: number | string;
   export const POLKAPET_ID: number | string;
