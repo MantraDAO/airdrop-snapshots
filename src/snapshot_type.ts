@@ -27,9 +27,9 @@ type Balances = { [address: string]: string };
 export type Snapshot<T extends Contract> = {
   [Contract.OM_STAKING]: OmStakingSnapshot;
   [Contract.UNI_OM_LP]: OmStakingSnapshot & { omPrice: string };
-  [Contract.UNI_BONDLY_ETH]: OmStakingSnapshot & { omPrice: string };
-  [Contract.UNI_BONDLY_USDT]: OmStakingSnapshot & { omPrice: string };
-  [Contract.UNI_BONDLY_WBNB]: OmStakingSnapshot & { omPrice: string };
+  [Contract.UNI_BONDLY_ETH]: OmStakingSnapshot & { bondlyPrice: string };
+  [Contract.UNI_BONDLY_USDT]: OmStakingSnapshot & { bondlyPrice: string };
+  [Contract.UNI_BONDLY_WBNB]: OmStakingSnapshot & { bondlyPrice: string };
   [Contract.CAKE_FINE_LP]: OmStakingSnapshot;
   [Contract.OM_NFT]: { blockNumber: number; totalSupply: string; balances: Balances };
   [Contract.ZENOM]: { blockNumber: number; totalSupply: string; price: string, balances: Balances };

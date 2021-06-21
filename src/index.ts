@@ -25,7 +25,11 @@ const availableContracts: Contract[] = [
   Contract.UNI_BONDLY_WBNB,
 ];
 
-const BSCContracts: ReadonlySet<Contract> = new Set([Contract.CAKE_FINE_LP, Contract.SBONDLY_BSC, Contract.UNI_BONDLY_WBNB]);
+const BSCContracts: ReadonlySet<Contract> = new Set([
+  Contract.CAKE_FINE_LP,
+  Contract.SBONDLY_BSC,
+  Contract.UNI_BONDLY_WBNB,
+]);
 
 export async function snapshot(contract: Contract, blockNumber: number | string | null) {
   const web3 = BSCContracts.has(contract) ? new Web3(BSC_NODE_RPC)

@@ -5,7 +5,7 @@ import Web3 from "web3";
 import { Contract, Snapshot as GenericSnapshot } from "./snapshot_type";
 import { ONE_TOKEN, sortedStakedBalances, ZERO_WORD } from "./utils";
 
-type Snapshot = GenericSnapshot<Contract.UNI_OM_LP>;
+type Snapshot = GenericSnapshot<Contract.UNI_BONDLY_ETH>;
 
 export async function snapshotUniBondlyEth(web3: Web3, blockNumber: number, bearingSnapshot: Snapshot): Promise<Snapshot> {
   const bearingBlockNumber = bearingSnapshot.blockNumber;
@@ -15,7 +15,7 @@ export async function snapshotUniBondlyEth(web3: Web3, blockNumber: number, bear
     stakedBalances[address] = new BN(bearingSnapshot.stakedBalances[address]).times(ONE_TOKEN);
   }
   const logs = await web3.eth.getPastLogs({
-    address: config.CONTRACTS_ADDRESSES.UNI_OM_LP,
+    address: config.CONTRACTS_ADDRESSES.UNI_BONDLY_ETH,
     fromBlock: bearingBlockNumber + 1,
     toBlock: blockNumber,
     topics: ["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"],
@@ -32,15 +32,15 @@ export async function snapshotUniBondlyEth(web3: Web3, blockNumber: number, bear
     totalStaked = totalStaked.plus(amount);
   }
   const uniTokenAddress = await web3.eth.call({
-    to: config.CONTRACTS_ADDRESSES.UNI_OM_LP,
+    to: config.CONTRACTS_ADDRESSES.UNI_BONDLY_ETH,
     data: "0x72f702f3",
   }, blockNumber).then((res) => `0x${res.slice(26)}`);
-  const omTokenAddress = await web3.eth.call({
+  const bondlyTokenAddress = await web3.eth.call({
     to: uniTokenAddress,
-    data: "0x0dfe1681",
+    data: "0xd21220a7",
   }, blockNumber).then((res) => `0x${res.slice(26)}`);
   const reserve = await web3.eth.call({
-    to: omTokenAddress,
+    to: bondlyTokenAddress,
     data: "0x70a08231" + uniTokenAddress.slice(2).padStart(64, "0"),
   }, blockNumber).then((res) => new BN(res.slice(2), 16));
   const uniTotalSupply = await web3.eth.call({
@@ -51,7 +51,7 @@ export async function snapshotUniBondlyEth(web3: Web3, blockNumber: number, bear
   return {
     blockNumber: blockNumber,
     totalStaked: totalStaked.div(ONE_TOKEN).toString(10),
-    omPrice: price.toString(10),
+    bondlyPrice: price.toString(10),
     stakedBalances: sortedStakedBalances(stakedBalances),
   };
 }

@@ -36,9 +36,27 @@ export async function snapshotUniBondlyWbnb(web3: Web3, blockNumber: number, bea
       totalStaked = totalStaked.plus(amount);
     }
   });
+  const uniTokenAddress = await web3.eth.call({
+    to: config.CONTRACTS_ADDRESSES.UNI_BONDLY_WBNB,
+    data: "0x72f702f3",
+  }, blockNumber).then((res) => `0x${res.slice(26)}`);
+  const bondlyTokenAddress = await web3.eth.call({
+    to: uniTokenAddress,
+    data: "0x0dfe1681",
+  }, blockNumber).then((res) => `0x${res.slice(26)}`);
+  const reserve = await web3.eth.call({
+    to: bondlyTokenAddress,
+    data: "0x70a08231" + uniTokenAddress.slice(2).padStart(64, "0"),
+  }, blockNumber).then((res) => new BN(res.slice(2), 16));
+  const uniTotalSupply = await web3.eth.call({
+    to: uniTokenAddress,
+    data: "0x18160ddd",
+  }, blockNumber).then((res) => new BN(res.slice(2), 16));
+  const price = reserve.div(uniTotalSupply).dp(18, BN.ROUND_FLOOR);
   return {
     blockNumber: blockNumber,
     totalStaked: totalStaked.div(ONE_TOKEN).toString(10),
+    bondlyPrice: price.toString(10),
     stakedBalances: sortedStakedBalances(stakedBalances),
   };
 }

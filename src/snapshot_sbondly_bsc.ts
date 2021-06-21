@@ -11,7 +11,11 @@ type Snapshot = GenericSnapshot<Contract.SBONDLY_BSC>;
 const TRANSFER_EVENT_SIGNATURE = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 const PRICE_UPDATED_EVENT_SIGNATURE = "0x15819dd2fd9f6418b142e798d08a18d0bf06ea368f4480b7b0d3f75bd966bc48";
 
-export async function snapshotSbondlyBsc(web3: Web3, blockNumber: number, bearingSnapshot: Snapshot): Promise<Snapshot> {
+export async function snapshotSbondlyBsc(
+  web3: Web3,
+  blockNumber: number,
+  bearingSnapshot: Snapshot,
+): Promise<Snapshot> {
   const bearingBlockNumber = bearingSnapshot.blockNumber;
   let price = new BN(bearingSnapshot.price);
   let totalSupply = new BN(bearingSnapshot.totalSupply);
