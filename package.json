@@ -16,8 +16,8 @@
     "snapshot:som": "yarn build && node ./dist som",
     "snapshot:som2": "yarn build && node ./dist som2",
     "snapshot:fine_cake": "yarn build && node ./dist cake_fine_lp",
-    "snapshot:bsc_staking": "yarn node ./src/snapshot_subgraph/snapshot_bsc.js",
-    "snapshot:polygon_staking": "yarn node ./src/snapshot_subgraph/snapshot_polygon.js"
+    "snapshot:bsc_som": "yarn node ./src/snapshot_subgraph/snapshot_bsc_som.js",
+    "snapshot:polygon_som": "yarn node ./src/snapshot_subgraph/snapshot_polygon_som.js"
   },
   "dependencies": {
     "axios": "^0.21.1",

@@ -58,13 +58,13 @@ const get_stakes = async() => {
                 first: MAX_RES,
                 skip: _offset_stake
             }
-        }, { 
+        }, {
             headers: {
                 'Content-type': 'application/json'
             }
         }
     );
-    
+
     // push eligible stakes
     for (let i = 0; i < response.data.data.stakes.length; i++) {
         if (response.data.data.stakes[i].blockNumber <= BLOCK_NUMBER) {
@@ -85,7 +85,7 @@ const get_stakes = async() => {
             return accumulator;
         }, []);
     }
-    
+
     return cleanedStakes;
 }
 
@@ -98,13 +98,13 @@ const get_unstakes = async() => {
                 first: MAX_RES,
                 skip: _offset_unstake
             }
-        }, { 
+        }, {
             headers: {
                 'Content-type': 'application/json'
             }
-        } 
+        }
     );
-    
+
     // push eligible unstakes
     for (let i = 0; i < response.data.data.unstakes.length; i++) {
         if (response.data.data.unstakes[i].blockNumber <= BLOCK_NUMBER) {
@@ -136,11 +136,11 @@ const get_latest_price = async () => {
             variables: {
                 skip: _offset_price
             }
-        }, { 
+        }, {
             headers: {
                 'Content-type': 'application/json'
             }
-        } 
+        }
     );
 
     for (let i = 0; i < response.data.data.priceUpdates.length; i++) {
@@ -191,5 +191,5 @@ const get_latest_price = async () => {
     });
 
     const csv = new ObjectsToCsv(snapshot);
-    await csv.toDisk('./output/legacy-snapshot-data/bsc-polygon-snapshots/polygon_snapshot.csv');
+    await csv.toDisk('./output/legacy-snapshot-data/bsc-polygon-snapshots/polygon_som.csv');
 })()
