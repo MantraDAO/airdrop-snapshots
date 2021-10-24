@@ -5,14 +5,16 @@ const axios = require('axios');
 
 let _offset_stake = 0;
 let _offset_unstake = 0;
-let _offset_price = 0;
+let _offset_claim = 0;
 
 let stakes = [];
 let unstakes = [];
-let latestPrice = [];
+
+let claims = [];
 
 let cleanedStakes = [];
 let cleanedUnstakes = [];
+let cleanedClaims = [];
 let snapshot = [];
 
 
@@ -21,37 +23,42 @@ const MAX_RES = 1000;
 const ZERO_NUM = 0;
 
 const queryStakes = `query getSnapshot($skip: Int!) {
-    stakes(first: 1000, skip: $skip, where: {token: "om"}) {
+    stakes(first: 1000, skip: $skip, where: {tokenSymbol: "OM"}) {
         id
         address
         stakedAmount
+        mintedAmount
         blockNumber
-        token
+        tokenSymbol
     }
 }`;
 
 const queryUnstake = `query getSnapshot($skip: Int!) {
-    unstakes(first: 1000, skip: $skip, where: { token: "om" }) {
+    unstakes(first: 1000, skip: $skip, where: { tokenSymbol: "OM" }) {
         id
         address
         unstakedAmount
+        burnedAmount
         blockNumber
-        token
+        tokenSymbol
     }
 }`;
 
-const queryPrice = `query getSnapshot($skip: Int!) {
-    priceUpdates(first: 1000, skip: $skip) {
+const queryClaims = `query getSnapshot($skip: Int!) {
+    claims(first: 1000, skip: $skip, where: { tokenSymbol: "OM" }) {
         id
-        mantissa
+        address
+        requestedAmount
+        claimedAmount
+        feeAmount
+        burnedAmount
         blockNumber
-        token
     }
 }`;
 
 const get_stakes = async() => {
     let response = await axios.post(
-        'https://api.thegraph.com/subgraphs/name/mantradao/mantra-dao-staking-polygon',
+        'https://api.thegraph.com/subgraphs/name/mantradao/polygon-staking-subgraph-legacy',
         {
             query: queryStakes,
             variables: {
@@ -72,15 +79,15 @@ const get_stakes = async() => {
         }
     }
 
+    // has next page - get next page
     if (response.data.data.stakes.length >= MAX_RES) {
-        // has next page - get next page
         _offset_stake = _offset_stake + MAX_RES;
         await get_stakes();
     } else {
         cleanedStakes = stakes.reduce((accumulator, cur) => {
             let addr = cur.address;
             let found = accumulator.find(elem => elem.address === addr);
-            if (found) found.stakedAmount = BigInt(found.stakedAmount) + BigInt(cur.stakedAmount);
+            if (found) found.mintedAmount = BigInt(found.mintedAmount) + BigInt(cur.mintedAmount);
             else accumulator.push(cur);
             return accumulator;
         }, []);
@@ -91,7 +98,7 @@ const get_stakes = async() => {
 
 const get_unstakes = async() => {
     let response = await axios.post(
-        'https://api.thegraph.com/subgraphs/name/mantradao/mantra-dao-staking-polygon',
+        'https://api.thegraph.com/subgraphs/name/mantradao/polygon-staking-subgraph-legacy',
         {
             query: queryUnstake,
             variables: {
@@ -119,7 +126,7 @@ const get_unstakes = async() => {
         cleanedUnstakes = unstakes.reduce((accumulator, cur) => {
             let addr = cur.address;
             let found = accumulator.find(elem => elem.address === addr);
-            if (found) found.unstakedAmount = BigInt(found.unstakedAmount) + BigInt(cur.unstakedAmount);
+            if (found) found.burnedAmount = BigInt(found.burnedAmount) + BigInt(cur.burnedAmount);
             else accumulator.push(cur);
             return accumulator;
         }, []);
@@ -128,13 +135,14 @@ const get_unstakes = async() => {
     return cleanedUnstakes;
 }
 
-const get_latest_price = async () => {
+const get_claims = async() => {
     let response = await axios.post(
-        'https://api.thegraph.com/subgraphs/name/mantradao/mantra-dao-staking-polygon',
+        'https://api.thegraph.com/subgraphs/name/mantradao/polygon-staking-subgraph-legacy',
         {
-            query: queryPrice,
+            query: queryClaims,
             variables: {
-                skip: _offset_price
+                first: MAX_RES,
+                skip: _offset_claim
             }
         }, {
             headers: {
@@ -143,38 +151,55 @@ const get_latest_price = async () => {
         }
     );
 
-    for (let i = 0; i < response.data.data.priceUpdates.length; i++) {
-        if (response.data.data.priceUpdates[i].blockNumber <= BLOCK_NUMBER) {
-            latestPrice.push(response.data.data.priceUpdates[i]);
+    // push eligible stakes
+    for (let i = 0; i < response.data.data.claims.length; i++) {
+        if (response.data.data.claims[i].blockNumber <= BLOCK_NUMBER) {
+            claims.push(response.data.data.claims[i]);
         }
     }
 
-    if (response.data.data.priceUpdates.length >= MAX_RES) {
-        _offset_price = _offset_price + MAX_RES;
-        await get_latest_price();
+    // has next page - get next page
+    if (response.data.data.claims.length >= MAX_RES) {
+        _offset_claim = _offset_claim + MAX_RES;
+        await get_claims();
+    } else {
+        cleanedClaims = claims.reduce((accumulator, cur) => {
+            let addr = cur.address;
+            let found = accumulator.find(elem => elem.address === addr);
+            if (found) found.burnedAmount = BigInt(found.burnedAmount) + BigInt(cur.burnedAmount);
+            else accumulator.push(cur);
+            return accumulator;
+        }, []);
     }
 
-    return latestPrice;
+    return cleanedClaims;
 }
 
 (async () => {
     await get_stakes();
     await get_unstakes();
-    await get_latest_price();
+    await get_claims();
 
-    cleanedStakes.forEach(function(element) {
+    cleanedStakes.forEach((element) => {
         if (cleanedUnstakes.find(e => e.address === element.address)) {
             snapshot.push({
                 address: element.address,
-                stakedBalance: (BigInt(element.stakedAmount) - BigInt(cleanedUnstakes.find(e => e.address === element.address).unstakedAmount))
+                stakedBalance: (BigInt(element.mintedAmount) - BigInt(cleanedUnstakes.find(e => e.address === element.address).burnedAmount))
             });
-        } else {
+        }
+        else {
             snapshot.push({
                 address: element.address,
-                stakedBalance: BigInt(element.stakedAmount)
+                stakedBalance: BigInt(element.mintedAmount)
             });
         }
     });
+
+    snapshot.forEach(((element) => {
+        if (cleanedClaims.find(e => e.address === element.address)) {
+            element.stakedBalance = BigInt(element.stakedBalance) - BigInt(cleanedClaims.find(e => e.address === element.address).burnedAmount)
+        }
+    }))
 
     snapshot.forEach((snap) => {
         if (snap.stakedBalance <= ZERO_NUM) {
@@ -183,12 +208,6 @@ const get_latest_price = async () => {
     });
 
     snapshot.sort((a,b) => (a.stakedBalance > b.stakedBalance) ? -1 : ((b.stakedBalance > a.stakedBalance) ? 1 : 0));
-    latestPrice.sort((a,b) => (a.blockNumber > b.blockNumber) ? -1 : ((b.blockNumber > a.blockNumber) ? 1 : 0));
-
-    snapshot.unshift({
-        address: 'latestPrice: ' + latestPrice[0].mantissa,
-        stakedBalance: ''
-    });
 
     const csv = new ObjectsToCsv(snapshot);
     await csv.toDisk('./output/legacy-snapshot-data/bsc-polygon-snapshots/polygon_som.csv');
