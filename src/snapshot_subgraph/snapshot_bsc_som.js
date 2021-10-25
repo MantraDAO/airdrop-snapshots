@@ -2,14 +2,16 @@ const config_data = require('../../config/default.json');
 const ObjectsToCsv = require('objects-to-csv');
 
 const axios = require('axios');
+const { default: BigNumber } = require('bignumber.js');
 
 let _offset_stake = 0;
 let _offset_unstake = 0;
 let _offset_claim = 0;
+let _offset_price = 0;
 
 let stakes = [];
 let unstakes = [];
-
+let priceUpdates = [];
 let claims = [];
 
 let cleanedStakes = [];
@@ -53,6 +55,17 @@ const queryClaims = `query getSnapshot($skip: Int!) {
         feeAmount
         burnedAmount
         blockNumber
+    }
+}`;
+
+const queryPrices = `query getSnapshot($skip: Int!) {
+    priceUpdates(first: 1000, skip: $skip, where: { tokenSymbol: "OM" }) {
+        id
+        mantissa
+        base
+        exponentiation
+        blockNumber
+        tokenSymbol
     }
 }`;
 
@@ -175,9 +188,42 @@ const get_claims = async() => {
     return cleanedClaims;
 }
 
+const get_prices = async() => {
+    let response = await axios.post(
+        'https://api.thegraph.com/subgraphs/name/mantradao/bsc-staking-subgraph-legacy',
+        {
+            query: queryPrices,
+            variables: {
+                first: MAX_RES,
+                skip: _offset_price
+            }
+        }, {
+            headers: {
+                'Content-type': 'application/json'
+            }
+        }
+    );
+
+    // push eligible stakes
+    for (let i = 0; i < response.data.data.priceUpdates.length; i++) {
+        if (response.data.data.priceUpdates[i].blockNumber <= BLOCK_NUMBER) {
+            priceUpdates.push(response.data.data.priceUpdates[i]);
+        }
+    }
+
+    // has next page - get next page
+    if (response.data.data.priceUpdates.length >= MAX_RES) {
+        _offset_price = _offset_price + MAX_RES;
+        await get_prices();
+    }
+
+    return priceUpdates;
+}
+
 (async () => {
     await get_stakes();
     await get_unstakes();
+    await get_prices();
     await get_claims();
 
     cleanedStakes.forEach((element) => {
@@ -201,9 +247,13 @@ const get_claims = async() => {
         }
     }))
 
+    priceUpdates.sort((a,b) => (a.blockNumber > b.blockNumber) ? -1 : ((b.blockNumber > a.blockNumber) ? 1 : 0));
+
     snapshot.forEach((snap) => {
         if (snap.stakedBalance <= ZERO_NUM) {
             snap.stakedBalance = ZERO_NUM;
+        } else {
+            snap.stakedBalance = BigInt(BigNumber(snap.stakedBalance) * BigNumber(BigNumber(priceUpdates[0].mantissa) * BigNumber(0.1 ** 18)));
         }
     });
 
